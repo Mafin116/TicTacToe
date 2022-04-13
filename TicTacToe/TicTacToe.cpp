@@ -3,15 +3,16 @@
 
 #include <iostream>
 #include <vector>
+#include <random>
 
 using namespace std;
 
 
 unsigned int cellCount = 5;
-unsigned int stepCount = 5;
+unsigned int stepCount = 0;
 int botFirst = 0;
 vector<vector<string>> spot(cellCount, vector<string>(cellCount, " "));
-//vector<vector<string>> spot{ {"O", " ", "X"},{"X", " ", " "},{"X", "O", "O"} };
+//vector<vector<string>> spot{ {" ", "X", "O"},{"O", "X", "X"},{" ", "O", " "} };
 vector<vector<int>> spotRisk(cellCount, vector<int>(cellCount, 0));
 bool endGame = false;
 
@@ -205,7 +206,15 @@ int miniMax(vector<vector<string>> spot)
                         stepCount++;
 
                         int co = miniMax(spot);
-                        count -= co;
+                        if (botFirst == 0)
+                        {
+                            count += co;
+                        }
+                        else
+                        {
+                            count -= co;
+                        }
+                        
                         spot[i][j] = " ";
                         stepCount--;
 
@@ -225,7 +234,14 @@ int miniMax(vector<vector<string>> spot)
                         stepCount++;
 
                         int co = miniMax(spot);
-                        count += co;
+                        if (botFirst == 0)
+                        {
+                            count += co;
+                        }
+                        else
+                        {
+                            count -= co;
+                        }
                         spot[i][j] = " ";
                         stepCount--;
 
@@ -283,7 +299,14 @@ void pcGo()
                 val = spotRisk[i][j];
                 xMax = i;
                 yMax = j;
-          }
+            }
+            srand(time(NULL));
+            if (spotRisk[i][j] == val && rand() % 2 == 1)
+            {
+                val = spotRisk[i][j];
+                xMax = i;
+                yMax = j;
+            }
 
         }
     }
@@ -395,8 +418,7 @@ void gameCycleEvE()
             pcGo();
         }
         drawCell(cellCount, spot);
-        if (stepCount >= cellCount * 2 - 1)
-        {
+
             if (endCheck(spot))
             {
                 if (stepCount % 2 == 0)
@@ -424,7 +446,7 @@ void gameCycleEvE()
                 cout << "win XO" << endl;
                 endGame = true;
             }
-        }
+        
 
     }
 }
@@ -514,4 +536,6 @@ int main()
             close = true;
         }
     }
+
+
 }
